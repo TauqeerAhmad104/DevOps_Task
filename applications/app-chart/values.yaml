@@ -1,0 +1,15 @@
+frontend:
+  image: "tauqeerdocker/manager-app2-tauq13:latest"  
+  replicas: 1
+  service:
+    type: ClusterIP
+    port: 80
+
+backend:
+  image: "tauqeerdocker/webapi:latest"        
+  replicas: 1
+  service:
+    type: ClusterIP
+    port: 8080
+  env:
+    connectionString: "Server=infra-chart-mysql.infrastructure.svc.cluster.local;Port=3306;Database=appdb;Uid=appuser;Pwd=appuser123;"

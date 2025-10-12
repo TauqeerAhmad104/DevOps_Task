@@ -1,0 +1,30 @@
+
+# MySQL Configuration  For API 
+
+mysql:
+  auth:
+    rootPassword: "root123"
+    username: "webappuser"
+    password: "webappuser"
+    database: "webappdb"
+
+  primary:
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClass: "local-path"
+    service:
+      type: ClusterIP
+      ports:
+        mysql: 3306
+
+
+# Backup Configuration
+
+backup:
+  enabled: true
+  schedule: "*/5 * * * *"   # every 5 minutes for demo
+  pvc:
+    name: "mysql-backup-pvc"
+    size: "1Gi"
+    storageClass: "local-path"

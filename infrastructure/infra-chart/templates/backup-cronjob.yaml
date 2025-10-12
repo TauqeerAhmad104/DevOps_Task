@@ -12,7 +12,7 @@ spec:
           restartPolicy: OnFailure
           containers:
           - name: mysql-backup
-            image: mysql:8
+            image: mysql
             env:
             - name: MYSQL_PWD
               valueFrom:

@@ -1,3 +1,4 @@
+# Argo CD Application: Infrastructure
 resource "kubernetes_manifest" "argocd_app_infrastructure" {
   manifest = {
     apiVersion = "argoproj.io/v1alpha1"
@@ -9,9 +10,10 @@ resource "kubernetes_manifest" "argocd_app_infrastructure" {
     spec = {
       project = "default"
       source = {
-        repoURL        = "https://github.com/<your-github-username>/DevOps_Task.git"
+        repoURL        = "https://github.com/TauqeerAhmad104/DevOps_Task.git"
         targetRevision = "main"
-        path           = "infrastructure"
+        path           = "infrastructure/infra-chart"
+        helm           = {}
       }
       destination = {
         server    = "https://kubernetes.default.svc"
@@ -19,14 +21,15 @@ resource "kubernetes_manifest" "argocd_app_infrastructure" {
       }
       syncPolicy = {
         automated = {
-          prune     = true
-          selfHeal  = true
+          prune    = true
+          selfHeal = true
         }
       }
     }
   }
 }
 
+# Argo CD Application: Applications (frontend + backend)
 resource "kubernetes_manifest" "argocd_app_applications" {
   manifest = {
     apiVersion = "argoproj.io/v1alpha1"
@@ -38,9 +41,10 @@ resource "kubernetes_manifest" "argocd_app_applications" {
     spec = {
       project = "default"
       source = {
-        repoURL        = "https://github.com/<your-github-username>/DevOps_Task.git"
+        repoURL        = "https://github.com/TauqeerAhmad104/DevOps_Task.git"
         targetRevision = "main"
-        path           = "applications"
+        path           = "applications/app-chart"
+        helm           = {}
       }
       destination = {
         server    = "https://kubernetes.default.svc"
@@ -48,8 +52,8 @@ resource "kubernetes_manifest" "argocd_app_applications" {
       }
       syncPolicy = {
         automated = {
-          prune     = true
-          selfHeal  = true
+          prune    = true
+          selfHeal = true
         }
       }
     }

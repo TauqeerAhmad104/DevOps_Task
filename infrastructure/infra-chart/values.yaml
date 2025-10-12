@@ -1,7 +1,8 @@
-
-# MySQL Configuration  For API 
-
 mysql:
+  image:
+    repository: mysql
+    tag: "8.0"
+
   auth:
     rootPassword: "root123"
     username: "webappuser"

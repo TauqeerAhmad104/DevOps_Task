@@ -9,22 +9,14 @@ mysql:
     password: "webappuser"
     database: "webappdb"
 
-  primary:
-    persistence:
-      enabled: true
-      size: 1Gi
-      storageClass: "local-path"
-    service:
-      type: ClusterIP
-      ports:
-        mysql: 3306
-
-
-# Backup Configuration
+  pvc:
+    name: mysql-data-pvc
+    size: 1Gi
+    storageClass: local-path
 
 backup:
   enabled: true
-  schedule: "*/5 * * * *"   # every 5 minutes for demo
+  schedule: "*/5 * * * *"   # every 5 minutes (demo)
   pvc:
     name: "mysql-backup-pvc"
     size: "1Gi"

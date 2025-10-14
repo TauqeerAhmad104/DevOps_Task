@@ -3,6 +3,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: mysql-backup
+  namespace: {{ .Release.Namespace }}
 spec:
   schedule: "{{ .Values.backup.schedule }}"
   jobTemplate:
@@ -11,24 +12,28 @@ spec:
         spec:
           restartPolicy: OnFailure
           containers:
-          - name: mysql-backup
-            image: mysql:8.0
-            env:
-            - name: MYSQL_PWD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Name }}-mysql
-                  key: mysql-root-password
-            command: ["/bin/sh","-c"]
-            args:
-            - >
-              mysqldump -h {{ .Release.Name }}-mysql -u root --all-databases
-              > /backups/backup-$(date +%Y%m%d-%H%M%S).sql
-            volumeMounts:
-            - name: backup-vol
-              mountPath: /backups
+            - name: mysql-backup
+              image: mysql:8.0
+              env:
+                - name: MYSQL_PWD
+                  valueFrom:
+                    secretKeyRef:
+                      name: mysql-root-secret
+                      key: password
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  # wait for MySQL to be reachable before dumping
+                  for i in $(seq 1 30); do
+                    mysqladmin ping -h mysql -uroot || sleep 2
+                    if [ $? -eq 0 ]; then break; fi
+                  done
+                  mysqldump -h mysql -u root --all-databases > /backups/backup-$(date +%Y%m%d-%H%M%S).sql
+              volumeMounts:
+                - name: backup-vol
+                  mountPath: /backups
           volumes:
-          - name: backup-vol
-            persistentVolumeClaim:
-              claimName: {{ .Values.backup.pvc.name }}
+            - name: backup-vol
+              persistentVolumeClaim:
+                claimName: {{ .Values.backup.pvc.name }}
 {{- end }}

@@ -17,9 +17,9 @@ spec:
     spec:
       containers:
         - name: backend-api
-          image: tauqeerahmad104/webapi:latest
+          image: {{ .Values.backend.image }}
           ports:
-            - containerPort: 5000
+            - containerPort: {{ .Values.backend.port }}
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: "Production"

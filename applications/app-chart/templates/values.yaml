@@ -1,0 +1,7 @@
+backend:
+  image: tauqeerahmad104/webapi:latest
+  port: 5000
+
+frontend:
+  image: tauqeerahmad104/managerapp2:latest
+  port: 80

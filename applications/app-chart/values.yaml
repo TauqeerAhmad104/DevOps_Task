@@ -1,7 +1,7 @@
 backend:
-  image: tauqeerahmad104/webapi:latest
+  image: tauqeerdocker/webapi:latest
   port: 5000
 
 frontend:
-  image: tauqeerahmad104/managerapp2:latest
+  image: tauqeerdocker/manager-app2-tauq13:latest
   port: 80

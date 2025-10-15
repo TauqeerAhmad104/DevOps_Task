@@ -20,3 +20,9 @@ spec:
           image: {{ .Values.frontend.image }}
           ports:
             - containerPort: {{ .Values.frontend.port }}
+          env:
+            - name: API_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: frontend-config
+                  key: API_BASE_URL

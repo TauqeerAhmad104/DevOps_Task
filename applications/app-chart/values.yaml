@@ -1,5 +1,5 @@
 backend:
-  image: tauqeerdocker/webapi:1.0
+  image: tauqeerahmad104/webapi:mysql
   port: 8080
   env:
     - name: ConnectionStrings__DefaultConnection

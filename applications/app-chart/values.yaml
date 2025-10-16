@@ -1,6 +1,9 @@
 backend:
   image: tauqeerdocker/webapi:1.0
   port: 8080
+  env:
+    - name: ConnectionStrings__DefaultConnection
+      value: "Server=mssql.infrastructure.svc.cluster.local,1433;Database=webappdb;User Id=webappuser;Password=webappuser;TrustServerCertificate=True;"
 
 frontend:
   image: tauqeerdocker/managerapp:1.0

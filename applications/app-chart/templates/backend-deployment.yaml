@@ -21,7 +21,8 @@ spec:
           ports:
             - containerPort: {{ .Values.backend.port }}
           env:
-            - name: ASPNETCORE_ENVIRONMENT
-              value: "Production"
-            - name: ConnectionStrings__DefaultConnection
-              value: "server=mysql.infrastructure.svc.cluster.local;database=webappdb;user=webappuser;password=webappuser"
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Production"
+          {{- if .Values.backend.env }}
+          {{- toYaml .Values.backend.env | nindent 10 }}
+          {{- end }}

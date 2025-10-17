@@ -6,5 +6,5 @@ backend:
       value: "Server=mysql.infrastructure.svc.cluster.local;Port=3306;Database=webappdb;User=webappuser;Password=webappuser;"
 
 frontend:
-  image: tauqeerdocker/managerapp:1.0
+  image: tauqeerdocker/managerapp:v3
   port: 80

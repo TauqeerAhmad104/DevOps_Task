@@ -24,22 +24,21 @@ spec:
               args:
                 - |
                   echo "Starting MySQL backup..."
-                  BACKUP_FILE="/backups/backup-$(date +%Y%m%d-%H%M%S).sql"
-                  mysqldump -h mysql.infrastructure.svc.cluster.local -u root --all-databases > "$BACKUP_FILE"
+                  mkdir -p /backups
+                  mysqldump -h mysql -u root --all-databases > /backups/backup-$(date +%Y%m%d-%H%M%S).sql
                   
                   echo "Cleaning old backups (keep 5 latest)..."
-                  ls -tp /backups/backup-*.sql | tail -n +6 | xargs -r rm -- 2>/dev/null || true
+                  ls -tp /backups/*.sql | grep -v '/$' | tail -n +6 | xargs -r rm --
                   
                   echo "Copying latest backup to local path..."
-                  mkdir -p {{ .Values.backup.localPath }}
-                  cp -f "$BACKUP_FILE" {{ .Values.backup.localPath }}/
-                  
+                  cp -r /backups/*.sql /local-backups/ || echo "⚠️ Copy to local path failed"
+
                   echo "Backup completed successfully."
               volumeMounts:
                 - name: backup-vol
                   mountPath: /backups
                 - name: local-copy
-                  mountPath: {{ .Values.backup.localPath }}
+                  mountPath: /local-backups
           volumes:
             - name: backup-vol
               persistentVolumeClaim:
@@ -47,4 +46,5 @@ spec:
             - name: local-copy
               hostPath:
                 path: {{ .Values.backup.localPath }}
+                type: DirectoryOrCreate
 {{- end }}

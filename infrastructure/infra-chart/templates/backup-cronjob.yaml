@@ -3,7 +3,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: mysql-backup
-  namespace: {{ .Release.Namespace }}
+  namespace: infrastructure
 spec:
   schedule: "{{ .Values.backup.schedule }}"
   jobTemplate:
@@ -23,17 +23,28 @@ spec:
               command: ["/bin/sh", "-c"]
               args:
                 - |
-                  # wait for MySQL to be reachable before dumping
-                  for i in $(seq 1 30); do
-                    mysqladmin ping -h mysql -uroot || sleep 2
-                    if [ $? -eq 0 ]; then break; fi
-                  done
-                  mysqldump -h mysql -u root --all-databases > /backups/backup-$(date +%Y%m%d-%H%M%S).sql
+                  echo "Starting MySQL backup..."
+                  BACKUP_FILE="/backups/backup-$(date +%Y%m%d-%H%M%S).sql"
+                  mysqldump -h mysql.infrastructure.svc.cluster.local -u root --all-databases > "$BACKUP_FILE"
+                  
+                  echo "Cleaning old backups (keep 5 latest)..."
+                  ls -tp /backups/backup-*.sql | tail -n +6 | xargs -r rm -- 2>/dev/null || true
+                  
+                  echo "Copying latest backup to local path..."
+                  mkdir -p {{ .Values.backup.localPath }}
+                  cp -f "$BACKUP_FILE" {{ .Values.backup.localPath }}/
+                  
+                  echo "Backup completed successfully."
               volumeMounts:
                 - name: backup-vol
                   mountPath: /backups
+                - name: local-copy
+                  mountPath: {{ .Values.backup.localPath }}
           volumes:
             - name: backup-vol
               persistentVolumeClaim:
                 claimName: {{ .Values.backup.pvc.name }}
+            - name: local-copy
+              hostPath:
+                path: {{ .Values.backup.localPath }}
 {{- end }}

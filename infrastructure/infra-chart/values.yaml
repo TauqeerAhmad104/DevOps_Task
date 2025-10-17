@@ -21,3 +21,4 @@ backup:
     name: "mysql-backup-pvc"
     size: "1Gi"
     storageClass: "local-path"
+  localPath: "/host_mnt/c/Projects/DevOps_Task/infrastructure"

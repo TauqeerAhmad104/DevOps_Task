@@ -1,5 +1,5 @@
 backend:
-  image: tauqeerahmad104/webapi:mysql
+  image: tauqeerahmad104/webapi:v2
   port: 8080
   env:
     - name: ConnectionStrings__DefaultConnection

@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: backend-db-migration
+  namespace: applications
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: run-migrations
+        image: mcr.microsoft.com/dotnet/sdk:8.0
+        workingDir: /app
+        command: ["bash", "-c"]
+        args:
+          - |
+            echo "Starting EF Core migrations..."
+            apt-get update -y && apt-get install -y unzip curl
+            echo "Installing EF Core tools..."
+            dotnet tool install --global dotnet-ef
+            export PATH="$PATH:/root/.dotnet/tools"
+            # Clone my repo and run migrations
+            git clone https://github.com/TauqeerAhmad104/webApi.git
+            cd webApi/webApi
+            dotnet restore
+            echo "Running EF database update..."
+            dotnet ef database update
+            echo "Migrations completed."
+        env:
+        - name: ConnectionStrings__DefaultConnection
+          value: "Server=mysql.infrastructure.svc.cluster.local;Port=3306;Database=webappdb;User=webappuser;Password=webappuser;"

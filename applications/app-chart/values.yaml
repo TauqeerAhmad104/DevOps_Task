@@ -3,7 +3,7 @@ backend:
   port: 8080
   env:
     - name: ConnectionStrings__DefaultConnection
-      value: "Server=mysql.infrastructure.svc.cluster.local;Port=3306;Database=webappdb;User=webappuser;Password=webappuser;"
+      value: "Server=mysql.infrastructure.svc.cluster.local;Port=3306;Database=webapi;User=webappuser;Password=webappuser;"
 
 frontend:
   image: tauqeerdocker/managerapp:v4

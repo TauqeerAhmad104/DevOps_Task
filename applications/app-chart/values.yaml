@@ -2,7 +2,7 @@ backend:
   image: tauqeerdocker/webapi:v2
   port: 8080
   env:
-    - name: ConnectionStrings__DefaultConnection
+    - name: ConnectionStrings__webapi
       value: "Server=mysql.infrastructure.svc.cluster.local;Port=3306;Database=webapi;User=webappuser;Password=webappuser;"
 
 frontend:

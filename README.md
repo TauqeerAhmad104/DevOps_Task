@@ -1,4 +1,4 @@
-**Devops Taks for Vikings**
+**Devops Taks**
 
 This repository demonstrates a complete GitOps-driven deployment workflow using Terraform, Argo CD, and Helm on a local k3d Kubernetes cluster as per the request.
 It provisions infrastructure (MySQL + backup automation) and deploys application workloads (Angular frontend + .NET Core backend) managed through Argo CD.

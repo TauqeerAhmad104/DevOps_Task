@@ -4,8 +4,9 @@ metadata:
   name: {{ .Values.backup.pvc.name }}
   namespace: {{ .Release.Namespace }}
 spec:
-  accessModes: ["ReadWriteOnce"]
+  accessModes:
+    - {{ .Values.backup.pvc.accessMode | quote }}
   resources:
     requests:
-      storage: {{ .Values.backup.pvc.size }}
-  storageClassName: {{ .Values.backup.pvc.storageClass }}
+      storage: {{ .Values.backup.pvc.size | quote }}
+  storageClassName: {{ .Values.backup.pvc.storageClass | quote }}

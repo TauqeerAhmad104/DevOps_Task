@@ -16,9 +16,11 @@ mysql:
 
 backup:
   enabled: true
-  schedule: "0 */5 * * *"   # every 5 hours
+  name: mysql-backup
+  image: mysql:8
+  schedule: "*/5 * * * *"   # every 5 minutes
   pvc:
-    name: "mysql-backup-pvc"
-    size: "1Gi"
-    storageClass: "local-path"
-  localPath: "/host_mnt/c/Projects/DevOps_Task/infrastructure"
+    name: mysql-backup-pvc
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    storageClass: local-path

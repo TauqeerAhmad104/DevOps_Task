@@ -2,8 +2,8 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: mysql-backup
-  namespace: infrastructure
+  name: {{ .Values.backup.name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   schedule: "{{ .Values.backup.schedule }}"
   jobTemplate:
@@ -13,38 +13,23 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: mysql-backup
-              image: mysql:8.0
+              image: {{ .Values.backup.image }}
               env:
                 - name: MYSQL_PWD
                   valueFrom:
                     secretKeyRef:
                       name: mysql-root-secret
                       key: password
-              command: ["/bin/sh", "-c"]
-              args:
+              command:
+                - sh
+                - -c
                 - |
-                  echo "Starting MySQL backup..."
-                  mkdir -p /backups
-                  mysqldump -h mysql -u root --all-databases > /backups/backup-$(date +%Y%m%d-%H%M%S).sql
-                  
-                  echo "Cleaning old backups (keep 5 latest)..."
-                  ls -tp /backups/*.sql | grep -v '/$' | tail -n +6 | xargs -r rm --
-                  
-                  echo "Copying latest backup to local path..."
-                  cp -r /backups/*.sql /local-backups/ || echo "⚠️ Copy to local path failed"
-
-                  echo "Backup completed successfully."
+                  mysqldump -h mysql -u root --all-databases > /backup/db-$(date +%F-%H-%M).sql
               volumeMounts:
-                - name: backup-vol
-                  mountPath: /backups
-                - name: local-copy
-                  mountPath: /local-backups
+                - name: backup-storage
+                  mountPath: /backup
           volumes:
-            - name: backup-vol
+            - name: backup-storage
               persistentVolumeClaim:
                 claimName: {{ .Values.backup.pvc.name }}
-            - name: local-copy
-              hostPath:
-                path: {{ .Values.backup.localPath }}
-                type: DirectoryOrCreate
 {{- end }}

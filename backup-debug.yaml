@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: backup-debug
+  namespace: infrastructure
+spec:
+  containers:
+    - name: backup-debug
+      image: busybox
+      command: ["sh", "-c", "sleep 3600"]
+      volumeMounts:
+        - name: backup-volume
+          mountPath: /backup
+  volumes:
+    - name: backup-volume
+      persistentVolumeClaim:
+        claimName: mysql-backup-pvc
+  restartPolicy: Never
